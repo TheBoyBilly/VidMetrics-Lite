@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Channel {
+  id          String        @id
+  title       String
+  uploadsPlaylistId String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  videos      Video[]
+  analysisRun AnalysisRun[]
+}
+
+model Video {
+  id          String         @id
+  channelId   String
+  title       String
+  publishedAt DateTime
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  channel     Channel        @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  snapshots   VideoSnapshot[]
+
+  @@index([channelId])
+}
+
+model AnalysisRun {
+  id          String   @id @default(cuid())
+  channelId   String
+  periodDays  Int
+  runAt       DateTime @default(now())
+  videoCount  Int
+  channel     Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  snapshots   VideoSnapshot[]
+
+  @@index([channelId, runAt])
+}
+
+model VideoSnapshot {
+  id            String   @id @default(cuid())
+  videoId       String
+  analysisRunId String
+  capturedAt    DateTime @default(now())
+  views         Int
+  likes         Int
+  comments      Int
+  engagementRate Float
+  performanceScore Float
+  velocityScore Float
+  video         Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  analysisRun   AnalysisRun @relation(fields: [analysisRunId], references: [id], onDelete: Cascade)
+
+  @@index([videoId, capturedAt])
+  @@index([analysisRunId])
+}
