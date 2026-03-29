@@ -4,11 +4,6 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
-  // CORS - restrict to same origin in production
-  response.headers.set("Access-Control-Allow-Origin", "self");
-  response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  response.headers.set("Access-Control-Allow-Headers", "Content-Type");
-
   // Security headers
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
@@ -18,7 +13,7 @@ export function middleware(request: NextRequest) {
   // CSP - restrict to same origin for scripts/styles
   response.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; font-src 'self'; connect-src 'self' https://www.googleapis.com"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: *.ytimg.com; font-src 'self'; connect-src 'self' https://www.googleapis.com"
   );
 
   // HSTS - enforce HTTPS (only in production)

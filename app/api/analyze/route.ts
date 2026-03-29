@@ -97,6 +97,14 @@ export async function POST(req: NextRequest) {
     logRequest(requestId, "Analysis complete", { videoCount: result.videos.length });
     return NextResponse.json(result, { headers: { "X-Request-ID": requestId, "X-Cache": "MISS" } });
   } catch (error) {
+    if (error instanceof YouTubeAPIError) {
+      logRequest(requestId, "YouTube API error", { type: error.type });
+      return apiError(error.statusCode || 500, error.getClientMessage(), error.type, requestId);
+    }
+    if (error instanceof InputValidationError) {
+      logRequest(requestId, "Validation error", { message: error.message });
+      return apiError(400, error.message, "INVALID_INPUT", requestId);
+    }
     logRequest(requestId, "Unhandled error", { error: String(error) });
     return apiError(500, "An unexpected error occurred. Please try again.", "INTERNAL_ERROR", requestId);
   }
@@ -129,7 +137,8 @@ async function buildAnalysis(
     const uploadsId = channel.contentDetails.relatedPlaylists.uploads;
 
     // Get playlist items, up to 500 to cover 90 days of daily uploads
-    const items = await getPlaylistVideoIds(uploadsId, 500);
+    // Get playlist items, up to 200 to cover 90 days of normal uploads without hitting Vercel timeouts
+    const items = await getPlaylistVideoIds(uploadsId, 200);
     logRequest(requestId, "Playlist items fetched", { count: items.length });
 
     // Filter by date robustly using UTC days

@@ -69,11 +69,13 @@ export default function HomePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ channelInput: trimmed, periodDays })
       });
-      if (!res.ok) throw new Error("Analysis failed");
-      const payload = (await res.json()) as AnalyzeResponse;
-      setData(payload);
-    } catch {
-      setError("Could not analyze this channel. Please verify the input and try again.");
+      const payload = await res.json();
+      if (!res.ok) {
+        throw new Error(payload.message || "Analysis failed");
+      }
+      setData(payload as AnalyzeResponse);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not analyze this channel. Please verify the input and try again.");
     } finally {
       setLoading(false);
     }
