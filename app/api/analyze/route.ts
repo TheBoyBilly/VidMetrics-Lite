@@ -105,7 +105,10 @@ export async function POST(req: NextRequest) {
       logRequest(requestId, "Validation error", { message: error.message });
       return apiError(400, error.message, "INVALID_INPUT", requestId);
     }
-    logRequest(requestId, "Unhandled error", { error: String(error) });
+    logRequest(requestId, "Unhandled error", { 
+      errorMessage: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
     return apiError(500, "An unexpected error occurred. Please try again.", "INTERNAL_ERROR", requestId);
   }
 }
