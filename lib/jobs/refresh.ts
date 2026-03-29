@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { computeAnalysis } from "@/lib/analytics/compute";
-import { getChannelById, getPlaylistVideoIds, getVideos } from "@/lib/youtube/client";
+import { getChannelById, getPlaylistVideoIds, getVideos, parseIsShort } from "@/lib/youtube/client";
 
 export async function refreshTrackedChannel(channelId: string, periodDays = 30) {
   // Resolve latest channel state from YouTube.
@@ -23,7 +23,8 @@ export async function refreshTrackedChannel(channelId: string, periodDays = 30) 
     publishedAt: v.snippet.publishedAt,
     views: Number(v.statistics?.viewCount ?? 0),
     likes: Number(v.statistics?.likeCount ?? 0),
-    comments: Number(v.statistics?.commentCount ?? 0)
+    comments: Number(v.statistics?.commentCount ?? 0),
+    isShort: parseIsShort(v.contentDetails?.duration)
   }));
 
   const analysis = computeAnalysis({

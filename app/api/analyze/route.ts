@@ -4,20 +4,12 @@ import { apiError } from "@/lib/errors";
 import { cacheKey, getCache, setCache } from "@/lib/cache/store";
 import { checkRateLimit, extractClientIp } from "@/lib/rate-limit";
 import { analyzeRequestSchema } from "@/lib/validation/schemas";
-import { getPlaylistVideoIds, getVideos } from "@/lib/youtube/client";
+import { getPlaylistVideoIds, getVideos, parseIsShort } from "@/lib/youtube/client";
 import { resolveChannel } from "@/lib/youtube/resolveChannel";
 import { YouTubeAPIError, InputValidationError } from "@/lib/youtube/errors";
 import type { AnalyzeResponse } from "@/types/analytics";
 
-function parseIsShort(duration?: string) {
-  if (!duration) return false;
-  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!match) return false;
-  const h = parseInt(match[1] || "0");
-  const m = parseInt(match[2] || "0");
-  const s = parseInt(match[3] || "0");
-  return (h * 3600 + m * 60 + s) <= 65;
-}
+
 
 const inflight = new Map<string, Promise<AnalyzeResponse>>();
 const CACHE_TTL_MS = 10 * 60 * 1000;

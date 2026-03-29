@@ -26,8 +26,9 @@ export class YouTubeAPIError extends Error {
 
   static fromResponse(status: number, errorData?: Record<string, unknown>): YouTubeAPIError {
     // YouTube API error responses have structure: { error: { code, message, errors: [...] } }
-    const errorCode = (errorData?.error as any)?.code;
-    const errorMessage = (errorData?.error as any)?.message;
+    const errorBody = errorData?.error as { code?: string | number, message?: string } | undefined;
+    const errorCode = errorBody?.code;
+    const errorMessage = errorBody?.message;
 
     if (status === 429 || errorCode === "quotaExceeded") {
       return new YouTubeAPIError("QUOTA_EXCEEDED", "YouTube API quota exceeded", status, errorData);

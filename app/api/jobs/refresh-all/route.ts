@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     try {
       const r = await refreshTrackedChannel(channel.id, periodDays);
       results.push({ channelId: channel.id, ...r });
-    } catch (e) {
+    } catch {
       results.push({ channelId: channel.id, refreshed: false, reason: "Refresh failed" });
     }
   }

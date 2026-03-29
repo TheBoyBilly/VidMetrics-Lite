@@ -180,3 +180,18 @@ export async function getVideos(videoIds: string[]): Promise<VideoItem[]> {
   return out;
 }
 
+/**
+ * Utility to detect if a video is a Short based on its ISO-8601 duration
+ */
+export function parseIsShort(duration?: string) {
+  if (!duration) return false;
+  // Format: PT#H#M#S
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return false;
+  const h = parseInt(match[1] || "0");
+  const m = parseInt(match[2] || "0");
+  const s = parseInt(match[3] || "0");
+  // Shorts are strictly < 60s, but we allow 65s buffer for edge cases/metadata lag
+  return (h * 3600 + m * 60 + s) <= 65;
+}
+
