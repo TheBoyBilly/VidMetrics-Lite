@@ -96,12 +96,15 @@ export async function POST(req: NextRequest) {
     const job = buildAnalysis(channelInput, periodDays, requestId);
     inflight.set(key, job);
 
-    const result = await job;
-    setCache(key, result, CACHE_TTL_MS);
-    inflight.delete(key);
-
-    logRequest(requestId, "Analysis complete", { videoCount: result.videos.length });
-    return NextResponse.json(result, { headers: { "X-Request-ID": requestId, "X-Cache": "MISS" } });
+    try {
+      const result = await job;
+      setCache(key, result, CACHE_TTL_MS);
+      logRequest(requestId, "Analysis complete", { videoCount: result.videos.length });
+      return NextResponse.json(result, { headers: { "X-Request-ID": requestId, "X-Cache": "MISS" } });
+    } finally {
+      // Ensure we always clean up inflight to prevent 'ghost' failed promises from blocking retries
+      inflight.delete(key);
+    }
   } catch (err: unknown) {
     const error = err as { isYouTubeAPIError?: boolean, isInputValidationError?: boolean, type: string, statusCode?: number, getClientMessage: () => string, message: string };
     if (error?.isYouTubeAPIError) {

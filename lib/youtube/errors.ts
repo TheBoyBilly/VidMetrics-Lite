@@ -35,10 +35,10 @@ export class YouTubeAPIError extends Error {
       return new YouTubeAPIError("QUOTA_EXCEEDED", "YouTube API quota exceeded", status, errorData);
     }
 
-    if (status === 403) {
+    if (status === 400 || status === 401 || status === 403) {
       return new YouTubeAPIError(
         "INVALID_AUTH",
-        "Authentication failed - check API key",
+        "Authentication failed - check API key and ensure YouTube Data API v3 is enabled",
         status,
         errorData
       );
