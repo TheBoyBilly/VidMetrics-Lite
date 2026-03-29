@@ -96,7 +96,8 @@ export async function POST(req: NextRequest) {
 
     logRequest(requestId, "Analysis complete", { videoCount: result.videos.length });
     return NextResponse.json(result, { headers: { "X-Request-ID": requestId, "X-Cache": "MISS" } });
-  } catch (error: any) {
+  } catch (err: unknown) {
+    const error = err as { isYouTubeAPIError?: boolean, isInputValidationError?: boolean, type: string, statusCode?: number, getClientMessage: () => string, message: string };
     if (error?.isYouTubeAPIError) {
       logRequest(requestId, "YouTube API error", { type: error.type });
       return apiError(error.statusCode || 500, error.getClientMessage(), error.type, requestId);
