@@ -124,7 +124,7 @@ export default function HomePage() {
           Enterprise Analytics
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">
-          VidMetrics <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Pro</span>
+          VidMetrics <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Lite</span>
         </h1>
         <p className="mt-4 text-slate-400 max-w-2xl mx-auto text-m">
           Deep structural analysis for any YouTube channel. Pinpoint outlier velocities, evaluate engagement retention, and uncover high-performing formats instantly.
