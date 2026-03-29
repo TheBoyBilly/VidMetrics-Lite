@@ -96,12 +96,12 @@ export async function POST(req: NextRequest) {
 
     logRequest(requestId, "Analysis complete", { videoCount: result.videos.length });
     return NextResponse.json(result, { headers: { "X-Request-ID": requestId, "X-Cache": "MISS" } });
-  } catch (error) {
-    if (error instanceof YouTubeAPIError) {
+  } catch (error: any) {
+    if (error?.isYouTubeAPIError) {
       logRequest(requestId, "YouTube API error", { type: error.type });
       return apiError(error.statusCode || 500, error.getClientMessage(), error.type, requestId);
     }
-    if (error instanceof InputValidationError) {
+    if (error?.isInputValidationError) {
       logRequest(requestId, "Validation error", { message: error.message });
       return apiError(400, error.message, "INVALID_INPUT", requestId);
     }

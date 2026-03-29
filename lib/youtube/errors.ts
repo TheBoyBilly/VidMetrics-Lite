@@ -14,6 +14,7 @@ export type YouTubeErrorType =
   | "UNKNOWN";
 
 export class YouTubeAPIError extends Error {
+  public readonly isYouTubeAPIError = true;
   constructor(
     public type: YouTubeErrorType,
     message: string,
@@ -91,6 +92,7 @@ export class YouTubeAPIError extends Error {
 }
 
 export class InputValidationError extends Error {
+  public readonly isInputValidationError = true;
   constructor(message: string) {
     super(message);
     this.name = "InputValidationError";
