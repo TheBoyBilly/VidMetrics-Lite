@@ -7,6 +7,7 @@ import { analyzeRequestSchema } from "@/lib/validation/schemas";
 import { getPlaylistVideoIds, getVideos, parseIsShort } from "@/lib/youtube/client";
 import { resolveChannel } from "@/lib/youtube/resolveChannel";
 import { YouTubeAPIError, InputValidationError } from "@/lib/youtube/errors";
+import { env } from "@/lib/env";
 import type { AnalyzeResponse } from "@/types/analytics";
 
 
