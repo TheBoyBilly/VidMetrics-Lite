@@ -87,12 +87,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Build analysis
-    const keyPrefix = env.YOUTUBE_API_KEY.slice(0, 6);
-    logRequest(requestId, "Starting analysis", { 
-      channelInput: channelInput.slice(0, 20),
-      apiKeyPrefix: keyPrefix,
-      isPlaceholder: env.YOUTUBE_API_KEY === "BUILD_TIME_PLACEHOLDER"
-    });
     const job = buildAnalysis(channelInput, periodDays, requestId);
     inflight.set(key, job);
 
